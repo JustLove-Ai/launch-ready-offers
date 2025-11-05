@@ -38,6 +38,7 @@ model Offer {
   status      OfferStatus  @default(DRAFT)
   totalValue  Float        @default(0)
   price       Float        @default(0)
+  tags        String[]     // Tags for filtering and categorization
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   products    Product[]
@@ -61,21 +62,24 @@ model Problem {
 }
 
 model Product {
-  id             String    @id @default(auto()) @map("_id") @db.ObjectId
-  name           String
-  description    String?
-  value          Float     @default(0)
-  isBonus        Boolean   @default(false)
-  deliveryFormat String?   // ebook, course, template, worksheet, etc
-  solution       String?   // How it solves the problem
-  order          Int       @default(0)
-  offerId        String    @db.ObjectId
-  offer          Offer     @relation(fields: [offerId], references: [id], onDelete: Cascade)
-  problemId      String?   @db.ObjectId
-  problem        Problem?  @relation(fields: [problemId], references: [id], onDelete: SetNull)
-  tasks          Task[]
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  id                 String            @id @default(auto()) @map("_id") @db.ObjectId
+  name               String
+  description        String?
+  value              Float             @default(0)
+  isBonus            Boolean           @default(false)
+  deliveryFormat     String?           // ebook, course, template, worksheet, etc
+  solution           String?           // How it solves the problem
+  order              Int               @default(0)
+  isAddedToInventory Boolean           @default(false) // Track if this has been added to inventory
+  offerId            String            @db.ObjectId
+  offer              Offer             @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  problemId          String?           @db.ObjectId
+  problem            Problem?          @relation(fields: [problemId], references: [id], onDelete: SetNull)
+  inventoryProductId String?           @db.ObjectId
+  inventoryProduct   InventoryProduct? @relation(fields: [inventoryProductId], references: [id], onDelete: SetNull)
+  tasks              Task[]
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
 
   @@map("products")
 }
@@ -107,4 +111,19 @@ model SubTask {
   updatedAt DateTime @updatedAt
 
   @@map("subtasks")
+}
+
+model InventoryProduct {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  description    String?
+  value          Float     @default(0)
+  deliveryFormat String?   // ebook, course, template, worksheet, etc
+  solution       String?   // How it solves the problem
+  tags           String[]  // Tags for filtering inventory items
+  products       Product[] // Products created from this inventory item
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@map("inventory_products")
 }

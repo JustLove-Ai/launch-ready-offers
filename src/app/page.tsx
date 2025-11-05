@@ -1,7 +1,8 @@
 import { getOffers } from '@/actions/offer-actions'
-import { OfferList } from '@/components/offer-list'
-import { CreateOfferDialog } from '@/components/create-offer-dialog'
-import { Sparkles } from 'lucide-react'
+import { OffersTable } from '@/components/offers-table'
+import { Button } from '@/components/ui/button'
+import { Sparkles, Plus } from 'lucide-react'
+import Link from 'next/link'
 
 export default async function Home() {
   const { offers } = await getOffers()
@@ -10,7 +11,7 @@ export default async function Home() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-12">
+        <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-semibold tracking-tight text-slate-900">
@@ -20,13 +21,18 @@ export default async function Home() {
                 Turn ideas into launched products with AI-powered guidance
               </p>
             </div>
-            <CreateOfferDialog />
+            <Link href="/offer/create">
+              <Button size="lg" className="gap-2">
+                <Plus className="h-5 w-5" />
+                Create Offer
+              </Button>
+            </Link>
           </div>
         </div>
 
-        {/* Offers Grid */}
+        {/* Offers Table */}
         {offers && offers.length > 0 ? (
-          <OfferList offers={offers} />
+          <OffersTable offers={offers} />
         ) : (
           <div className="flex flex-col items-center justify-center rounded-3xl border border-slate-200 bg-white/50 px-4 py-24 backdrop-blur-sm">
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500">
@@ -39,7 +45,12 @@ export default async function Home() {
               Let AI help you build a compelling offer stack with problem-solving products
               your audience will love
             </p>
-            <CreateOfferDialog />
+            <Link href="/offer/create">
+              <Button size="lg" className="gap-2">
+                <Plus className="h-5 w-5" />
+                Create Offer
+              </Button>
+            </Link>
           </div>
         )}
       </div>

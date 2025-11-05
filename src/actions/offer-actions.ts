@@ -170,3 +170,87 @@ export async function calculateOfferTotals(offerId: string) {
     return { success: false, error: 'Failed to calculate totals' }
   }
 }
+
+export async function createFullOffer(data: {
+  name: string
+  topic?: string
+  description?: string
+  tags: string[]
+  price: number
+  totalValue: number
+  launchDate?: Date
+  problems: Array<{
+    id: string
+    title: string
+    description: string
+    emotionalHook: string
+  }>
+  products: Array<{
+    id: string
+    name: string
+    description: string
+    value: number
+    deliveryFormat: string
+    solution: string
+    problemId?: string
+    isBonus: boolean
+  }>
+}) {
+  try {
+    // Create a map of temporary problem IDs to their database problems
+    const problemIdMap = new Map<string, string>()
+
+    const offer = await prisma.offer.create({
+      data: {
+        name: data.name,
+        topic: data.topic,
+        description: data.description,
+        tags: data.tags,
+        price: data.price,
+        totalValue: data.totalValue,
+        launchDate: data.launchDate,
+        status: OfferStatus.DRAFT,
+        problems: {
+          create: data.problems.map(problem => ({
+            title: problem.title,
+            description: problem.description,
+            emotionalHook: problem.emotionalHook,
+          }))
+        }
+      },
+      include: {
+        problems: true,
+      }
+    })
+
+    // Map temporary problem IDs to real database IDs
+    data.problems.forEach((tempProblem, index) => {
+      problemIdMap.set(tempProblem.id, offer.problems[index].id)
+    })
+
+    // Create products with correct problem references
+    await Promise.all(
+      data.products.map((product, index) =>
+        prisma.product.create({
+          data: {
+            name: product.name,
+            description: product.description,
+            value: product.value,
+            deliveryFormat: product.deliveryFormat,
+            solution: product.solution,
+            isBonus: product.isBonus,
+            order: index,
+            offerId: offer.id,
+            problemId: product.problemId ? problemIdMap.get(product.problemId) : undefined,
+          }
+        })
+      )
+    )
+
+    revalidatePath('/')
+    return { success: true, offer }
+  } catch (error) {
+    console.error('Error creating full offer:', error)
+    return { success: false, error: 'Failed to create offer' }
+  }
+}
