@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum OfferStatus {
+  DRAFT
+  IN_PROGRESS
+  READY
+  LAUNCHED
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model Offer {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  topic       String?
+  description String?
+  launchDate  DateTime?
+  status      OfferStatus  @default(DRAFT)
+  totalValue  Float        @default(0)
+  price       Float        @default(0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  products    Product[]
+  problems    Problem[]
+
+  @@map("offers")
+}
+
+model Problem {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  description   String?
+  emotionalHook String?   // Why this problem hurts
+  offerId       String    @db.ObjectId
+  offer         Offer     @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  products      Product[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("problems")
+}
+
+model Product {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  description    String?
+  value          Float     @default(0)
+  isBonus        Boolean   @default(false)
+  deliveryFormat String?   // ebook, course, template, worksheet, etc
+  solution       String?   // How it solves the problem
+  order          Int       @default(0)
+  offerId        String    @db.ObjectId
+  offer          Offer     @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  problemId      String?   @db.ObjectId
+  problem        Problem?  @relation(fields: [problemId], references: [id], onDelete: SetNull)
+  tasks          Task[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@map("products")
+}
+
+model Task {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  dueDate     DateTime?
+  status      TaskStatus   @default(TODO)
+  priority    TaskPriority @default(MEDIUM)
+  productId   String       @db.ObjectId
+  product     Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  subtasks    SubTask[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("tasks")
+}
+
+model SubTask {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  completed Boolean  @default(false)
+  order     Int      @default(0)
+  taskId    String   @db.ObjectId
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("subtasks")
+}
