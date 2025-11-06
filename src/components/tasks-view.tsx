@@ -208,7 +208,7 @@ export function TasksView({ offer: initialOffer }: TasksViewProps) {
         )}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_800px] flex-1 overflow-hidden">
+      <div className="grid gap-6 lg:grid-cols-[1fr_1fr] flex-1 overflow-hidden">
         {/* Tasks Table */}
         <Card className="flex flex-col overflow-hidden">
           <div className="p-6 pb-4 flex-shrink-0">

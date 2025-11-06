@@ -17,7 +17,7 @@ export function OfferPreview({ offer }: OfferPreviewProps) {
   const bonuses = offer.products.filter((p) => p.isBonus)
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="w-full">
       {/* Stack Slide */}
       <div className="overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-2xl">
         {/* Header */}
