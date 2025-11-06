@@ -148,9 +148,9 @@ export function ProblemsView({ offer, initialProblems }: ProblemsViewProps) {
   )
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col h-full overflow-hidden">
       {/* Action Bar */}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4 mb-6 flex-shrink-0">
         <div className="flex-1">
           <Input
             placeholder="Search problems..."
@@ -179,10 +179,13 @@ export function ProblemsView({ offer, initialProblems }: ProblemsViewProps) {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_800px]">
+      <div className="grid gap-6 lg:grid-cols-[1fr_400px] flex-1 overflow-hidden">
         {/* Problems Table */}
-        <Card className="p-6">
-          <h2 className="mb-4 text-xl font-semibold text-slate-900">Problems & Solutions</h2>
+        <Card className="flex flex-col overflow-hidden">
+          <div className="p-6 pb-4 flex-shrink-0">
+            <h2 className="text-xl font-semibold text-slate-900">Problems & Solutions</h2>
+          </div>
+          <div className="flex-1 overflow-auto px-6 pb-6">
           <Table>
           <TableHeader>
             <TableRow>
@@ -249,10 +252,13 @@ export function ProblemsView({ offer, initialProblems }: ProblemsViewProps) {
             )}
           </TableBody>
         </Table>
-      </Card>
+          </div>
+        </Card>
 
-      {/* Live Preview */}
-      <OfferPreviewPanel offer={offer} />
+        {/* Live Preview */}
+        <div className="overflow-hidden">
+          <OfferPreviewPanel offer={offer} />
+        </div>
       </div>
 
       {/* Add Dialog */}

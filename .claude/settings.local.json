@@ -7,7 +7,15 @@
       "Bash(git commit:*)",
       "Bash(git config:*)",
       "Bash(git push:*)",
-      "Bash(npx prisma generate:*)"
+      "Bash(npx prisma generate:*)",
+      "Bash(taskkill:*)",
+      "Bash(npx prisma db push:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(tasklist:*)",
+      "Bash(wmic process where \"name=''''node.exe''''\" get ProcessId,CommandLine /format:list)",
+      "Bash(wmic process where \"name=''''node.exe''''\" get ProcessId,CommandLine)",
+      "Bash(wmic process where \"name=''''node.exe''''\" get CommandLine)"
     ],
     "deny": [],
     "ask": []

@@ -21,18 +21,20 @@ export default async function OfferLayout({
 
   return (
     <SidebarProvider>
-      <OfferSidebar offer={result.offer} />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-slate-200 bg-white px-4">
-          <div className="flex items-center gap-2">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <h1 className="text-xl font-semibold text-slate-900">{result.offer.name}</h1>
-          </div>
-          <OfferHeader offer={result.offer} />
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-6">{children}</div>
-      </SidebarInset>
+      <div className="flex h-screen w-full overflow-hidden">
+        <OfferSidebar offer={result.offer} />
+        <SidebarInset className="flex flex-col flex-1 overflow-hidden">
+          <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-slate-200 bg-white px-4">
+            <div className="flex items-center gap-2">
+              <SidebarTrigger className="-ml-1" />
+              <Separator orientation="vertical" className="mr-2 h-4" />
+              <h1 className="text-xl font-semibold text-slate-900">{result.offer.name}</h1>
+            </div>
+            <OfferHeader offer={result.offer} />
+          </header>
+          <div className="flex-1 overflow-hidden p-6">{children}</div>
+        </SidebarInset>
+      </div>
     </SidebarProvider>
   )
 }

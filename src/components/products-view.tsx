@@ -88,9 +88,9 @@ export function ProductsView({ offer: initialOffer }: ProductsViewProps) {
   )
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col h-full overflow-hidden">
       {/* Action Bar */}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4 mb-6 flex-shrink-0">
         <div className="flex-1">
           <Input
             placeholder="Search products..."
@@ -114,85 +114,91 @@ export function ProductsView({ offer: initialOffer }: ProductsViewProps) {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_800px]">
+      <div className="grid gap-6 lg:grid-cols-[1fr_400px] flex-1 overflow-hidden">
         {/* Products Table */}
-        <Card className="p-6">
-          <h2 className="mb-4 text-xl font-semibold text-slate-900">Products & Bonuses</h2>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Value</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredProducts.length === 0 ? (
+        <Card className="flex flex-col overflow-hidden">
+          <div className="p-6 pb-4 flex-shrink-0">
+            <h2 className="text-xl font-semibold text-slate-900">Products & Bonuses</h2>
+          </div>
+          <div className="flex-1 overflow-auto px-6 pb-6">
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={4} className="h-24 text-center">
-                    <p className="text-sm text-slate-500">
-                      {searchQuery ? 'No products found.' : 'No products yet. Add your first product!'}
-                    </p>
-                  </TableCell>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Value</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ) : (
-                filteredProducts.map((product) => (
-                  <TableRow key={product.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{product.name}</span>
-                        {product.isBonus && (
-                          <Badge variant="secondary" className="text-xs">
-                            BONUS
-                          </Badge>
-                        )}
-                      </div>
-                      {product.description && (
-                        <p className="text-sm text-slate-500 line-clamp-1">{product.description}</p>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {(product as any).deliveryFormat ? (
-                        <Badge variant="outline" className="text-xs">
-                          {(product as any).deliveryFormat}
-                        </Badge>
-                      ) : (
-                        <span className="text-sm text-slate-400">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <span className="font-semibold text-purple-600">${product.value.toFixed(0)}</span>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEditProduct(product)}
-                          className="hover:text-blue-600"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(product.id)}
-                          className="hover:text-red-600"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+              </TableHeader>
+              <TableBody>
+                {filteredProducts.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="h-24 text-center">
+                      <p className="text-sm text-slate-500">
+                        {searchQuery ? 'No products found.' : 'No products yet. Add your first product!'}
+                      </p>
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ) : (
+                  filteredProducts.map((product) => (
+                    <TableRow key={product.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{product.name}</span>
+                          {product.isBonus && (
+                            <Badge variant="secondary" className="text-xs">
+                              BONUS
+                            </Badge>
+                          )}
+                        </div>
+                        {product.description && (
+                          <p className="text-sm text-slate-500 line-clamp-1">{product.description}</p>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {(product as any).deliveryFormat ? (
+                          <Badge variant="outline" className="text-xs">
+                            {(product as any).deliveryFormat}
+                          </Badge>
+                        ) : (
+                          <span className="text-sm text-slate-400">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-semibold text-purple-600">${product.value.toFixed(0)}</span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEditProduct(product)}
+                            className="hover:text-blue-600"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDelete(product.id)}
+                            className="hover:text-red-600"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </Card>
 
         {/* Live Preview */}
-        <OfferPreviewPanel offer={{ ...offer, products: localProducts }} />
+        <div className="overflow-hidden">
+          <OfferPreviewPanel offer={{ ...offer, products: localProducts }} />
+        </div>
       </div>
 
       {/* Dialogs */}
