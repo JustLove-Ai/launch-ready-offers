@@ -111,6 +111,14 @@ export async function updateOffer(
     status?: OfferStatus
     price?: number
     totalValue?: number
+    template?: string
+    themeName?: string
+    customPrimary?: string
+    customSecondary?: string
+    customAccent?: string
+    customText?: string
+    customBackground?: string
+    customBorder?: string
   }
 ) {
   try {
@@ -135,6 +143,56 @@ export async function updateOffer(
   } catch (error) {
     console.error('Error updating offer:', error)
     return { success: false, error: 'Failed to update offer' }
+  }
+}
+
+export async function updateOfferCustomization(
+  id: string,
+  customization: {
+    template: string
+    themeName: string
+    customPrimary?: string | null
+    customSecondary?: string | null
+    customAccent?: string | null
+    customText?: string | null
+    customBackground?: string | null
+    customBorder?: string | null
+    customHeaderText?: string | null
+    customTotalValueLabel?: string | null
+    customPriceLabel?: string | null
+    customButtonText?: string | null
+    customBonusBadge?: string | null
+    customValueLabel?: string | null
+  }
+) {
+  try {
+    const offer = await prisma.offer.update({
+      where: { id },
+      data: {
+        template: customization.template,
+        themeName: customization.themeName,
+        customPrimary: customization.customPrimary,
+        customSecondary: customization.customSecondary,
+        customAccent: customization.customAccent,
+        customText: customization.customText,
+        customBackground: customization.customBackground,
+        customBorder: customization.customBorder,
+        customHeaderText: customization.customHeaderText,
+        customTotalValueLabel: customization.customTotalValueLabel,
+        customPriceLabel: customization.customPriceLabel,
+        customButtonText: customization.customButtonText,
+        customBonusBadge: customization.customBonusBadge,
+        customValueLabel: customization.customValueLabel,
+      },
+      include: {
+        products: true,
+      },
+    })
+    revalidatePath(`/offer/${id}`)
+    return { success: true, offer }
+  } catch (error) {
+    console.error('Error updating offer customization:', error)
+    return { success: false, error: 'Failed to update customization' }
   }
 }
 

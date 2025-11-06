@@ -9,9 +9,8 @@ import Link from 'next/link'
 import { StepOne } from '@/components/create-offer/step-one'
 import { StepTwo } from '@/components/create-offer/step-two'
 import { StepThree } from '@/components/create-offer/step-three'
-import { StepFour } from '@/components/create-offer/step-four'
-import { StepFive } from '@/components/create-offer/step-five'
 import { useRouter } from 'next/navigation'
+import { createFullOffer } from '@/actions/offer-actions'
 
 export type Problem = {
   id: string
@@ -45,10 +44,8 @@ export type OfferData = {
 
 const steps = [
   { number: 1, title: 'Describe Your Offer', description: 'Tell us what you want to create' },
-  { number: 2, title: 'Problems & Solutions', description: 'AI-generated problems your offer solves' },
-  { number: 3, title: 'Product Ideas', description: 'AI-generated product concepts' },
-  { number: 4, title: 'Select Best Fit', description: 'AI-recommended products and bonuses' },
-  { number: 5, title: 'Review & Launch', description: 'Finalize your offer' },
+  { number: 2, title: 'Problems & Solutions', description: 'Define problems your offer solves' },
+  { number: 3, title: 'Products & Launch', description: 'Add products and create your offer' },
 ]
 
 export default function CreateOfferPage() {
@@ -87,17 +84,43 @@ export default function CreateOfferPage() {
   const canProceed = () => {
     switch (currentStep) {
       case 1:
-        return offerData.name && offerData.description
+        return offerData.description && offerData.price > 0
       case 2:
         return offerData.problems.length > 0
       case 3:
-        return offerData.productIdeas.length > 0
-      case 4:
-        return offerData.selectedProducts.length > 0
-      case 5:
-        return true
+        return offerData.productIdeas.length > 0 && offerData.price > 0
       default:
         return false
+    }
+  }
+
+  const handleCreateOffer = async () => {
+    setIsLoading(true)
+    try {
+      const totalValue = offerData.productIdeas.reduce((sum, p) => sum + p.value, 0)
+
+      // Auto-generate offer name from description (first 50 chars)
+      const autoName = offerData.description.slice(0, 50).trim() + (offerData.description.length > 50 ? '...' : '')
+
+      const result = await createFullOffer({
+        name: autoName,
+        topic: '',
+        description: offerData.description,
+        tags: [],
+        price: offerData.price,
+        totalValue,
+        launchDate: offerData.launchDate,
+        problems: offerData.problems,
+        products: offerData.productIdeas
+      })
+
+      if (result.success && result.offer) {
+        router.push(`/offer/${result.offer.id}`)
+      }
+    } catch (error) {
+      console.error('Error creating offer:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -215,23 +238,6 @@ export default function CreateOfferPage() {
                 setIsLoading={setIsLoading}
               />
             )}
-            {currentStep === 4 && (
-              <StepFour
-                offerData={offerData}
-                updateOfferData={updateOfferData}
-                isLoading={isLoading}
-                setIsLoading={setIsLoading}
-              />
-            )}
-            {currentStep === 5 && (
-              <StepFive
-                offerData={offerData}
-                updateOfferData={updateOfferData}
-                isLoading={isLoading}
-                setIsLoading={setIsLoading}
-                onComplete={(offerId) => router.push(`/offer/${offerId}`)}
-              />
-            )}
           </CardContent>
         </Card>
 
@@ -266,9 +272,24 @@ export default function CreateOfferPage() {
               )}
             </Button>
           ) : (
-            <div className="text-sm text-slate-600">
-              Review and create your offer above
-            </div>
+            <Button
+              onClick={handleCreateOffer}
+              disabled={!canProceed() || isLoading}
+              size="lg"
+              className="gap-2"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Creating Offer...
+                </>
+              ) : (
+                <>
+                  Create Offer
+                  <Check className="h-4 w-4" />
+                </>
+              )}
+            </Button>
           )}
         </div>
       </div>

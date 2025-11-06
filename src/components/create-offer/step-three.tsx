@@ -150,276 +150,274 @@ export function StepThree({ offerData, updateOfferData, isLoading, setIsLoading 
       <Alert>
         <Sparkles className="h-4 w-4" />
         <AlertDescription>
-          AI will generate product ideas that solve the problems you've identified.
-          Each product will be designed to deliver specific value to your audience.
+          Add products manually, select from inventory, or use AI to generate product ideas based on your problems.
         </AlertDescription>
       </Alert>
 
-      {offerData.productIdeas.length === 0 ? (
-        <div className="text-center py-12">
+      {/* Action Buttons - Always Visible */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold">
+          {offerData.productIdeas.length === 0 ? 'Add Products' : `Products (${offerData.productIdeas.length})`}
+        </h3>
+        <div className="flex gap-2">
+          <Button
+            onClick={addNewProduct}
+            variant="outline"
+            size="sm"
+            className="gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Add Manually
+          </Button>
+          {inventoryProducts.length > 0 && (
+            <Dialog open={showInventoryDialog} onOpenChange={setShowInventoryDialog}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                >
+                  <Archive className="h-4 w-4" />
+                  From Inventory
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Select from Inventory</DialogTitle>
+                  <DialogDescription>
+                    Choose products from your inventory to add to this offer
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-3">
+                  {inventoryProducts.map(product => (
+                    <Card
+                      key={product.id}
+                      className={`p-4 cursor-pointer transition-all ${
+                        selectedInventoryIds.has(product.id)
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'hover:border-slate-300'
+                      }`}
+                      onClick={() => toggleInventorySelection(product.id)}
+                    >
+                      <div className="flex items-start gap-3">
+                        <input
+                          type="checkbox"
+                          checked={selectedInventoryIds.has(product.id)}
+                          onChange={() => toggleInventorySelection(product.id)}
+                          className="mt-1"
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between mb-2">
+                            <div>
+                              <h4 className="font-semibold">{product.name}</h4>
+                              {product.deliveryFormat && (
+                                <Badge variant="outline" className="text-xs mt-1">
+                                  {product.deliveryFormat}
+                                </Badge>
+                              )}
+                            </div>
+                            <span className="font-semibold">${product.value}</span>
+                          </div>
+                          {product.description && (
+                            <p className="text-sm text-slate-600">{product.description}</p>
+                          )}
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+                <div className="flex justify-end gap-2 pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedInventoryIds(new Set())
+                      setShowInventoryDialog(false)
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={addFromInventory}
+                    disabled={selectedInventoryIds.size === 0}
+                  >
+                    Add {selectedInventoryIds.size > 0 ? `(${selectedInventoryIds.size})` : ''}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
           <Button
             onClick={handleGenerate}
             disabled={isLoading || offerData.problems.length === 0}
-            size="lg"
-            className="gap-2"
+            size="sm"
+            className="gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white"
           >
-            <Sparkles className="h-5 w-5" />
-            {isLoading ? 'Generating Product Ideas...' : 'Generate Product Ideas with AI'}
+            <Sparkles className="h-4 w-4" />
+            {isLoading ? 'Generating...' : offerData.productIdeas.length === 0 ? 'Generate with AI' : 'Regenerate'}
           </Button>
-          {offerData.problems.length === 0 && (
-            <p className="text-sm text-slate-500 mt-4">
-              Please add problems in the previous step first
-            </p>
-          )}
         </div>
-      ) : (
-        <>
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Product Ideas ({offerData.productIdeas.length})</h3>
-            <div className="flex gap-2">
-              {inventoryProducts.length > 0 && (
-                <Dialog open={showInventoryDialog} onOpenChange={setShowInventoryDialog}>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="gap-2"
-                    >
-                      <Archive className="h-4 w-4" />
-                      From Inventory
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle>Select from Inventory</DialogTitle>
-                      <DialogDescription>
-                        Choose products from your inventory to add to this offer
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-3">
-                      {inventoryProducts.map(product => (
-                        <Card
-                          key={product.id}
-                          className={`p-4 cursor-pointer transition-all ${
-                            selectedInventoryIds.has(product.id)
-                              ? 'border-blue-500 bg-blue-50'
-                              : 'hover:border-slate-300'
-                          }`}
-                          onClick={() => toggleInventorySelection(product.id)}
-                        >
-                          <div className="flex items-start gap-3">
-                            <input
-                              type="checkbox"
-                              checked={selectedInventoryIds.has(product.id)}
-                              onChange={() => toggleInventorySelection(product.id)}
-                              className="mt-1"
-                            />
-                            <div className="flex-1">
-                              <div className="flex items-start justify-between mb-2">
-                                <div>
-                                  <h4 className="font-semibold">{product.name}</h4>
-                                  {product.deliveryFormat && (
-                                    <Badge variant="outline" className="text-xs mt-1">
-                                      {product.deliveryFormat}
-                                    </Badge>
-                                  )}
-                                </div>
-                                <span className="font-semibold">${product.value}</span>
-                              </div>
-                              {product.description && (
-                                <p className="text-sm text-slate-600">{product.description}</p>
-                              )}
-                            </div>
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
-                    <div className="flex justify-end gap-2 pt-4">
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          setSelectedInventoryIds(new Set())
-                          setShowInventoryDialog(false)
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={addFromInventory}
-                        disabled={selectedInventoryIds.size === 0}
-                      >
-                        Add {selectedInventoryIds.size > 0 ? `(${selectedInventoryIds.size})` : ''}
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              )}
-              <Button
-                onClick={addNewProduct}
-                variant="outline"
-                size="sm"
-                className="gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                Add Product
-              </Button>
-              <Button
-                onClick={handleGenerate}
-                disabled={isLoading}
-                variant="outline"
-                size="sm"
-                className="gap-2"
-              >
-                <Sparkles className="h-4 w-4" />
-                Regenerate
-              </Button>
-            </div>
-          </div>
+      </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            {offerData.productIdeas.map((product, index) => (
-              <Card key={product.id} className="p-4">
-                {editingId === product.id && editForm ? (
-                  <div className="space-y-4">
+      {/* Products List or Empty State */}
+      {offerData.productIdeas.length === 0 ? (
+        <Card className="p-8">
+          <div className="text-center text-slate-500">
+            <p className="mb-4">No products added yet.</p>
+            <p className="text-sm">
+              Add products manually, select from inventory{inventoryProducts.length > 0 ? ` (${inventoryProducts.length} available)` : ''},
+              or use AI to generate ideas based on your problems.
+            </p>
+            {offerData.problems.length === 0 && (
+              <p className="text-sm text-amber-600 mt-2">
+                Note: AI generation requires problems from the previous step.
+              </p>
+            )}
+          </div>
+        </Card>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2">
+          {offerData.productIdeas.map((product, index) => (
+            <Card key={product.id} className="p-4">
+              {editingId === product.id && editForm ? (
+                <div className="space-y-4">
+                  <div>
+                    <Label>Product Name *</Label>
+                    <Input
+                      value={editForm.name}
+                      onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                      placeholder="e.g., Social Media Content Calendar Template"
+                    />
+                  </div>
+                  <div>
+                    <Label>Description *</Label>
+                    <Textarea
+                      value={editForm.description}
+                      onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                      placeholder="Describe what this product includes..."
+                      rows={3}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label>Product Name *</Label>
+                      <Label>Value ($) *</Label>
                       <Input
-                        value={editForm.name}
-                        onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                        placeholder="e.g., Social Media Content Calendar Template"
+                        type="number"
+                        value={editForm.value}
+                        onChange={(e) => setEditForm({ ...editForm, value: parseFloat(e.target.value) || 0 })}
+                        placeholder="97"
                       />
                     </div>
                     <div>
-                      <Label>Description *</Label>
-                      <Textarea
-                        value={editForm.description}
-                        onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                        placeholder="Describe what this product includes..."
-                        rows={3}
-                      />
+                      <Label>Delivery Format *</Label>
+                      <Select
+                        value={editForm.deliveryFormat}
+                        onValueChange={(value) => setEditForm({ ...editForm, deliveryFormat: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {deliveryFormats.map(format => (
+                            <SelectItem key={format} value={format}>
+                              {format}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label>Value ($) *</Label>
-                        <Input
-                          type="number"
-                          value={editForm.value}
-                          onChange={(e) => setEditForm({ ...editForm, value: parseFloat(e.target.value) || 0 })}
-                          placeholder="97"
-                        />
-                      </div>
-                      <div>
-                        <Label>Delivery Format *</Label>
-                        <Select
-                          value={editForm.deliveryFormat}
-                          onValueChange={(value) => setEditForm({ ...editForm, deliveryFormat: value })}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {deliveryFormats.map(format => (
-                              <SelectItem key={format} value={format}>
-                                {format}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
+                  </div>
+                  <div>
+                    <Label>Solution / How it helps</Label>
+                    <Textarea
+                      value={editForm.solution}
+                      onChange={(e) => setEditForm({ ...editForm, solution: e.target.value })}
+                      placeholder="Explain how this product solves the problem..."
+                      rows={2}
+                    />
+                  </div>
+                  {offerData.problems.length > 0 && (
                     <div>
-                      <Label>Solution / How it helps</Label>
-                      <Textarea
-                        value={editForm.solution}
-                        onChange={(e) => setEditForm({ ...editForm, solution: e.target.value })}
-                        placeholder="Explain how this product solves the problem..."
-                        rows={2}
-                      />
+                      <Label>Links to Problem</Label>
+                      <Select
+                        value={editForm.problemId || 'none'}
+                        onValueChange={(value) => setEditForm({ ...editForm, problemId: value === 'none' ? undefined : value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">None</SelectItem>
+                          {offerData.problems.map(problem => (
+                            <SelectItem key={problem.id} value={problem.id}>
+                              {problem.title}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-                    {offerData.problems.length > 0 && (
+                  )}
+                  <div className="flex gap-2">
+                    <Button onClick={saveEditing} size="sm" className="gap-2">
+                      <Check className="h-4 w-4" />
+                      Save
+                    </Button>
+                    <Button onClick={cancelEditing} variant="outline" size="sm" className="gap-2">
+                      <X className="h-4 w-4" />
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-start gap-2">
+                      <Package className="h-5 w-5 text-purple-600 mt-0.5" />
                       <div>
-                        <Label>Links to Problem</Label>
-                        <Select
-                          value={editForm.problemId || 'none'}
-                          onValueChange={(value) => setEditForm({ ...editForm, problemId: value === 'none' ? undefined : value })}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="none">None</SelectItem>
-                            {offerData.problems.map(problem => (
-                              <SelectItem key={problem.id} value={problem.id}>
-                                {problem.title}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <h4 className="font-semibold text-base">{product.name}</h4>
+                        <Badge variant="outline" className="text-xs mt-1">
+                          {product.deliveryFormat}
+                        </Badge>
                       </div>
-                    )}
-                    <div className="flex gap-2">
-                      <Button onClick={saveEditing} size="sm" className="gap-2">
-                        <Check className="h-4 w-4" />
-                        Save
+                    </div>
+                    <div className="flex gap-1">
+                      <Button
+                        onClick={() => startEditing(product)}
+                        variant="ghost"
+                        size="sm"
+                      >
+                        <Edit2 className="h-3.5 w-3.5" />
                       </Button>
-                      <Button onClick={cancelEditing} variant="outline" size="sm" className="gap-2">
-                        <X className="h-4 w-4" />
-                        Cancel
+                      <Button
+                        onClick={() => removeProduct(product.id)}
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
                       </Button>
                     </div>
                   </div>
-                ) : (
-                  <>
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-start gap-2">
-                        <Package className="h-5 w-5 text-purple-600 mt-0.5" />
-                        <div>
-                          <h4 className="font-semibold text-base">{product.name}</h4>
-                          <Badge variant="outline" className="text-xs mt-1">
-                            {product.deliveryFormat}
-                          </Badge>
-                        </div>
-                      </div>
-                      <div className="flex gap-1">
-                        <Button
-                          onClick={() => startEditing(product)}
-                          variant="ghost"
-                          size="sm"
-                        >
-                          <Edit2 className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button
-                          onClick={() => removeProduct(product.id)}
-                          variant="ghost"
-                          size="sm"
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                    </div>
-                    <p className="text-sm text-slate-600 mb-3">{product.description}</p>
-                    {product.solution && (
-                      <p className="text-sm text-emerald-600 mb-3">
-                        ✓ {product.solution}
-                      </p>
-                    )}
-                    <div className="flex items-center justify-between pt-3 border-t">
-                      <span className="text-lg font-semibold text-slate-900">
-                        ${product.value}
+                  <p className="text-sm text-slate-600 mb-3">{product.description}</p>
+                  {product.solution && (
+                    <p className="text-sm text-emerald-600 mb-3">
+                      ✓ {product.solution}
+                    </p>
+                  )}
+                  <div className="flex items-center justify-between pt-3 border-t">
+                    <span className="text-lg font-semibold text-slate-900">
+                      ${product.value}
+                    </span>
+                    {product.problemId && (
+                      <span className="text-xs text-slate-500">
+                        Solves: {offerData.problems.find(p => p.id === product.problemId)?.title}
                       </span>
-                      {product.problemId && (
-                        <span className="text-xs text-slate-500">
-                          Solves: {offerData.problems.find(p => p.id === product.problemId)?.title}
-                        </span>
-                      )}
-                    </div>
-                  </>
-                )}
+                    )}
+                  </div>
+                </>
+              )}
               </Card>
             ))}
           </div>
-        </>
       )}
     </div>
   )

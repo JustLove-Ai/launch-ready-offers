@@ -3,10 +3,12 @@
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import { X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { CalendarIcon } from 'lucide-react'
 import { OfferData } from '@/app/offer/create/page'
-import { useState, KeyboardEvent } from 'react'
+import { format } from 'date-fns'
 
 interface StepOneProps {
   offerData: OfferData
@@ -15,72 +17,14 @@ interface StepOneProps {
 }
 
 export function StepOne({ offerData, updateOfferData, isLoading }: StepOneProps) {
-  const [tagInput, setTagInput] = useState('')
-
-  const addTag = () => {
-    if (tagInput.trim() && !offerData.tags.includes(tagInput.trim())) {
-      updateOfferData({
-        tags: [...offerData.tags, tagInput.trim()]
-      })
-      setTagInput('')
-    }
-  }
-
-  const removeTag = (tagToRemove: string) => {
-    updateOfferData({
-      tags: offerData.tags.filter(tag => tag !== tagToRemove)
-    })
-  }
-
-  const handleTagKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      addTag()
-    }
-  }
-
   return (
     <div className="space-y-6">
       <div>
-        <Label htmlFor="name" className="text-base">
-          Offer Name *
-        </Label>
-        <p className="text-sm text-slate-500 mb-2">
-          What would you like to call this offer?
-        </p>
-        <Input
-          id="name"
-          placeholder="e.g., Ultimate Social Media Growth Bundle"
-          value={offerData.name}
-          onChange={(e) => updateOfferData({ name: e.target.value })}
-          disabled={isLoading}
-          className="text-base"
-        />
-      </div>
-
-      <div>
-        <Label htmlFor="topic" className="text-base">
-          Topic / Niche
-        </Label>
-        <p className="text-sm text-slate-500 mb-2">
-          What market or niche does this offer serve?
-        </p>
-        <Input
-          id="topic"
-          placeholder="e.g., Social Media Marketing for Small Businesses"
-          value={offerData.topic}
-          onChange={(e) => updateOfferData({ topic: e.target.value })}
-          disabled={isLoading}
-          className="text-base"
-        />
-      </div>
-
-      <div>
         <Label htmlFor="description" className="text-base">
-          Description *
+          What do you want to create? *
         </Label>
         <p className="text-sm text-slate-500 mb-2">
-          Describe what you want to create. Be specific about your target audience and the main outcome they should achieve.
+          Describe your offer idea. Be specific about your target audience and what problem you're solving.
         </p>
         <Textarea
           id="description"
@@ -91,44 +35,60 @@ export function StepOne({ offerData, updateOfferData, isLoading }: StepOneProps)
           rows={8}
           className="text-base resize-none"
         />
-        <p className="text-sm text-slate-500 mt-2">
-          Tip: The more detail you provide, the better AI can generate relevant problems and product ideas
-        </p>
       </div>
 
-      <div>
-        <Label htmlFor="tags" className="text-base">
-          Tags
-        </Label>
-        <p className="text-sm text-slate-500 mb-2">
-          Add tags to help organize and filter your offers
-        </p>
-        <div className="flex gap-2">
-          <Input
-            id="tags"
-            placeholder="e.g., marketing, social media, small business"
-            value={tagInput}
-            onChange={(e) => setTagInput(e.target.value)}
-            onKeyDown={handleTagKeyDown}
-            disabled={isLoading}
-          />
-        </div>
-        {offerData.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-3">
-            {offerData.tags.map((tag) => (
-              <Badge key={tag} variant="secondary" className="gap-1">
-                {tag}
-                <button
-                  onClick={() => removeTag(tag)}
-                  className="ml-1 hover:text-red-600"
-                  type="button"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </Badge>
-            ))}
+      <div className="grid md:grid-cols-2 gap-6">
+        <div>
+          <Label htmlFor="price" className="text-base">
+            Your Price *
+          </Label>
+          <p className="text-sm text-slate-500 mb-2">
+            What will you charge for this offer?
+          </p>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">$</span>
+            <Input
+              id="price"
+              type="number"
+              value={offerData.price || ''}
+              onChange={(e) => updateOfferData({ price: parseFloat(e.target.value) || 0 })}
+              className="pl-7 text-base"
+              placeholder="97"
+              disabled={isLoading}
+            />
           </div>
-        )}
+        </div>
+
+        <div>
+          <Label className="text-base">Launch Date (Optional)</Label>
+          <p className="text-sm text-slate-500 mb-2">
+            When do you plan to launch?
+          </p>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full justify-start text-left font-normal"
+                disabled={isLoading}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {offerData.launchDate ? (
+                  format(offerData.launchDate, 'PPP')
+                ) : (
+                  <span className="text-slate-500">Pick a date</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={offerData.launchDate}
+                onSelect={(date) => updateOfferData({ launchDate: date })}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
     </div>
   )

@@ -15,9 +15,19 @@
       "Bash(tasklist:*)",
       "Bash(wmic process where \"name=''''node.exe''''\" get ProcessId,CommandLine /format:list)",
       "Bash(wmic process where \"name=''''node.exe''''\" get ProcessId,CommandLine)",
-      "Bash(wmic process where \"name=''''node.exe''''\" get CommandLine)"
+      "Bash(wmic process where \"name=''''node.exe''''\" get CommandLine)",
+      "Bash(npm run dev:*)",
+      "Bash(wmic process where \"CommandLine like ''''%launch-ready-offers%''''\" get ProcessId 2)",
+      "Bash(nul)",
+      "Bash(dir:*)",
+      "Bash(cmd /c dir:*)",
+      "Bash(cmd /c \"if not exist src\\app\\offer\\[id]\\customization mkdir src\\app\\offer\\[id]\\customization\")"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "shadcn"
+  ]
 }

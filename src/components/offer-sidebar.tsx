@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ArrowLeft, Package, ListChecks, Target } from 'lucide-react'
+import { ArrowLeft, Package, ListChecks, Target, Palette } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Sidebar,
@@ -39,6 +39,11 @@ export function OfferSidebar({ offer }: OfferSidebarProps) {
       title: 'Launch Tasks',
       icon: ListChecks,
       href: `/offer/${offer.id}/tasks`,
+    },
+    {
+      title: 'Customize Preview',
+      icon: Palette,
+      href: `/offer/${offer.id}/customization`,
     },
   ]
 

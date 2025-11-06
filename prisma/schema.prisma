@@ -39,6 +39,27 @@ model Offer {
   totalValue  Float        @default(0)
   price       Float        @default(0)
   tags        String[]     // Tags for filtering and categorization
+
+  // Customization settings
+  template    String       @default("classic-stack")  // Template type
+  themeName   String       @default("classic-green")  // Predefined theme name
+
+  // Custom color overrides (optional)
+  customPrimary    String?
+  customSecondary  String?
+  customAccent     String?
+  customText       String?
+  customBackground String?
+  customBorder     String?
+
+  // Custom text overrides (optional)
+  customHeaderText       String?
+  customTotalValueLabel  String?
+  customPriceLabel       String?
+  customButtonText       String?
+  customBonusBadge       String?
+  customValueLabel       String?
+
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   products    Product[]
