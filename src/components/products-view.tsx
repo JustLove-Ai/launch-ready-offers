@@ -114,7 +114,7 @@ export function ProductsView({ offer: initialOffer }: ProductsViewProps) {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_400px] flex-1 overflow-hidden">
+      <div className="grid gap-6 lg:grid-cols-[1fr_800px] flex-1 overflow-hidden">
         {/* Products Table */}
         <Card className="flex flex-col overflow-hidden">
           <div className="p-6 pb-4 flex-shrink-0">
