@@ -215,106 +215,108 @@ export function TasksView({ offer: initialOffer }: TasksViewProps) {
             <h2 className="text-xl font-semibold text-slate-900">Launch Tasks</h2>
           </div>
           <div className="flex-1 overflow-auto px-6 pb-6">
-          <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Task</TableHead>
-              <TableHead>Product</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Progress</TableHead>
-              <TableHead>Due Date</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredTasks.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
-                  <p className="text-sm text-slate-500">
-                    {searchQuery || statusFilter !== 'all'
-                      ? 'No tasks found.'
-                      : offer.products.length === 0
-                        ? 'Add products first, then create tasks for each product.'
-                        : 'No tasks yet. Select a product to add your first task!'}
-                  </p>
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredTasks.map((task) => {
-                const completedSubtasks = task.subtasks.filter((st) => st.completed).length
-                const totalSubtasks = task.subtasks.length
-                const taskProgress = totalSubtasks > 0 ? (completedSubtasks / totalSubtasks) * 100 : 0
-
-                return (
-                  <TableRow
-                    key={task.id}
-                    className="cursor-pointer hover:bg-slate-50"
-                    onClick={() => {
-                      setSelectedTask(task)
-                      setShowTaskDetails(true)
-                    }}
-                  >
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{task.title}</p>
-                        {task.description && (
-                          <p className="text-sm text-slate-500 line-clamp-1">{task.description}</p>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="text-xs">
-                        {task.productName}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={getStatusBadge(task.status) as any} className="text-xs">
-                        {task.status.replace('_', ' ')}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {totalSubtasks > 0 ? (
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-slate-500">
-                            {completedSubtasks}/{totalSubtasks}
-                          </span>
-                          <Progress value={taskProgress} className="h-1.5 w-16" />
-                        </div>
-                      ) : (
-                        <span className="text-sm text-slate-400">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {task.dueDate ? (
-                        <div className="flex items-center gap-1 text-xs text-slate-500">
-                          <Calendar className="h-3 w-3" />
-                          {formatDistanceToNow(new Date(task.dueDate), { addSuffix: true })}
-                        </div>
-                      ) : (
-                        <span className="text-sm text-slate-400">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleDeleteTask(task.id)
-                          }}
-                          className="hover:text-red-600"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+            <div className="min-w-full">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[30%]">Task</TableHead>
+                    <TableHead className="w-[15%]">Product</TableHead>
+                    <TableHead className="w-[12%]">Status</TableHead>
+                    <TableHead className="w-[18%]">Progress</TableHead>
+                    <TableHead className="w-[15%]">Due Date</TableHead>
+                    <TableHead className="w-[10%] text-right">Actions</TableHead>
                   </TableRow>
-                )
-              })
+                </TableHeader>
+                <TableBody>
+                  {filteredTasks.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="h-24 text-center">
+                        <p className="text-sm text-slate-500">
+                          {searchQuery || statusFilter !== 'all'
+                            ? 'No tasks found.'
+                            : offer.products.length === 0
+                              ? 'Add products first, then create tasks for each product.'
+                              : 'No tasks yet. Select a product to add your first task!'}
+                        </p>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredTasks.map((task) => {
+                      const completedSubtasks = task.subtasks.filter((st) => st.completed).length
+                      const totalSubtasks = task.subtasks.length
+                      const taskProgress = totalSubtasks > 0 ? (completedSubtasks / totalSubtasks) * 100 : 0
+
+                      return (
+                        <TableRow
+                          key={task.id}
+                          className="cursor-pointer hover:bg-slate-50"
+                          onClick={() => {
+                            setSelectedTask(task)
+                            setShowTaskDetails(true)
+                          }}
+                        >
+                          <TableCell className="max-w-0">
+                            <div>
+                              <p className="font-medium truncate">{task.title}</p>
+                              {task.description && (
+                                <p className="text-sm text-slate-500 line-clamp-1">{task.description}</p>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="text-xs whitespace-nowrap">
+                              {task.productName}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={getStatusBadge(task.status) as any} className="text-xs whitespace-nowrap">
+                              {task.status.replace('_', ' ')}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            {totalSubtasks > 0 ? (
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-slate-500 whitespace-nowrap">
+                                  {completedSubtasks}/{totalSubtasks}
+                                </span>
+                                <Progress value={taskProgress} className="h-1.5 w-12 flex-shrink-0" />
+                              </div>
+                            ) : (
+                              <span className="text-sm text-slate-400">-</span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {task.dueDate ? (
+                              <div className="flex items-center gap-1 text-xs text-slate-500">
+                                <Calendar className="h-3 w-3 flex-shrink-0" />
+                                <span className="truncate">{formatDistanceToNow(new Date(task.dueDate), { addSuffix: true })}</span>
+                              </div>
+                            ) : (
+                              <span className="text-sm text-slate-400">-</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end flex-shrink-0">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleDeleteTask(task.id)
+                                }}
+                                className="hover:text-red-600 h-8 w-8"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })
             )}
           </TableBody>
         </Table>
+            </div>
           </div>
         </Card>
 

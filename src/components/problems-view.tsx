@@ -186,72 +186,74 @@ export function ProblemsView({ offer, initialProblems }: ProblemsViewProps) {
             <h2 className="text-xl font-semibold text-slate-900">Problems & Solutions</h2>
           </div>
           <div className="flex-1 overflow-auto px-6 pb-6">
-          <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Problem</TableHead>
-              <TableHead>Emotional Hook</TableHead>
-              <TableHead>Solutions</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredProblems.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={4} className="h-24 text-center">
-                  <p className="text-sm text-slate-500">
-                    {searchQuery ? 'No problems found.' : 'No problems yet. Add your first problem or use AI to generate!'}
-                  </p>
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredProblems.map((problem) => (
-                <TableRow key={problem.id}>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{problem.title}</p>
-                      {problem.description && (
-                        <p className="text-sm text-slate-500 line-clamp-2">{problem.description}</p>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {problem.emotionalHook ? (
-                      <p className="text-sm italic text-slate-600">{problem.emotionalHook}</p>
-                    ) : (
-                      <span className="text-sm text-slate-400">-</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary">
-                      {problem.products?.length || 0} solution{problem.products?.length !== 1 ? 's' : ''}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleEdit(problem)}
-                        className="hover:text-blue-600"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(problem.id)}
-                        className="hover:text-red-600"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+            <div className="min-w-full">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[35%]">Problem</TableHead>
+                    <TableHead className="w-[30%]">Emotional Hook</TableHead>
+                    <TableHead className="w-[15%]">Solutions</TableHead>
+                    <TableHead className="w-[20%] text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredProblems.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="h-24 text-center">
+                        <p className="text-sm text-slate-500">
+                          {searchQuery ? 'No problems found.' : 'No problems yet. Add your first problem or use AI to generate!'}
+                        </p>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredProblems.map((problem) => (
+                      <TableRow key={problem.id}>
+                        <TableCell className="max-w-0">
+                          <div>
+                            <p className="font-medium truncate">{problem.title}</p>
+                            {problem.description && (
+                              <p className="text-sm text-slate-500 line-clamp-2">{problem.description}</p>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="max-w-0">
+                          {problem.emotionalHook ? (
+                            <p className="text-sm italic text-slate-600 line-clamp-2">{problem.emotionalHook}</p>
+                          ) : (
+                            <span className="text-sm text-slate-400">-</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="secondary" className="whitespace-nowrap">
+                            {problem.products?.length || 0} solution{problem.products?.length !== 1 ? 's' : ''}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-1 flex-shrink-0">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEdit(problem)}
+                              className="hover:text-blue-600 h-8 w-8"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDelete(problem.id)}
+                              className="hover:text-red-600 h-8 w-8"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         </Card>
 
